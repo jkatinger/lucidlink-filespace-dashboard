@@ -1,0 +1,14 @@
+{
+  "name": "jkatinger-lab",
+  "owner": { "name": "Josh Katinger", "email": "joshua.katinger@lucidlink.com" },
+  "metadata": { "description": "LucidLink Lab prototypes from Josh Katinger. Private, unofficial." },
+  "plugins": [
+    {
+      "name": "lucidlink-filespace-dashboard",
+      "source": "./",
+      "description": "Dashboard for a LucidLink filespace: activity pulse, humans vs agents, who is working where, cold data, storage mix, recent changes.",
+      "version": "0.1.0",
+      "category": "productivity"
+    }
+  ]
+}

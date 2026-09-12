@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Filespace Dashboard — LucidLink Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ─── LucidLink Lab Design Tokens — Sand Edition ──────────────── */
+    :root {
+      --ll-lab-bg:              #F0EFE9;
+      --ll-lab-surface:         #ffffff;
+      --ll-lab-surface-subtle:  #F0EFE9;
+      --ll-lab-border:          #D8D0C0;
+      --ll-lab-border-strong:   #C4B9A1;
+      --ll-lab-text:            #191610;
+      --ll-lab-text-muted:      #64583F;
+      --ll-lab-text-subtle:     #917E5A;
+      --ll-lab-accent:          #5E53E0;
+      --ll-lab-accent-hover:    #4A40C8;
+      --ll-lab-accent-subtle:   #E3E0FF;
+      --ll-lab-accent-text:     #ffffff;
+      --ll-lab-success:         #16a34a;
+      --ll-lab-success-subtle:  #dcfce7;
+      --ll-lab-warning:         #b45309;
+      --ll-lab-warning-subtle:  #fef3c7;
+      --ll-lab-danger:          #dc2626;
+      --ll-lab-danger-subtle:   #fee2e2;
+      --ll-lab-neutral-subtle:  #F0EFE9;
+      --ll-lab-font:            'Inter', system-ui, -apple-system, sans-serif;
+      --ll-lab-font-mono:       ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
+      --ll-lab-text-xs:   11px;  --ll-lab-text-sm:   13px;  --ll-lab-text-base: 15px;
+      --ll-lab-text-lg:   17px;  --ll-lab-text-xl:   20px;  --ll-lab-text-2xl:  24px;  --ll-lab-text-3xl: 30px;
+      --ll-lab-space-1:  4px;   --ll-lab-space-2:  8px;   --ll-lab-space-3:  12px;
+      --ll-lab-space-4:  16px;  --ll-lab-space-5:  20px;  --ll-lab-space-6:  24px;
+      --ll-lab-space-8:  32px;  --ll-lab-space-10: 40px;  --ll-lab-space-12: 48px;
+      --ll-lab-radius-sm:   6px;   --ll-lab-radius-md:  10px;
+      --ll-lab-radius-lg:   14px;  --ll-lab-radius-full: 9999px;
+      --ll-lab-transition: 150ms ease;
+
+      /* chart series: fixed order, validated on the white card surface */
+      --viz-writes:  #5E53E0;   /* slot 1, Lab indigo */
+      --viz-reads:   #1baf7a;   /* slot 2, aqua */
+      --viz-deletes: #eb6834;   /* slot 3, orange */
+      --viz-other:   #C4B9A1;   /* neutral */
+      /* one-hue sequential ramp for magnitude (age, size) */
+      --viz-seq-1: #E3E0FF; --viz-seq-2: #BDB7F5; --viz-seq-3: #9A92EE;
+      --viz-seq-4: #7B71E7; --viz-seq-5: #5E53E0; --viz-seq-6: #4030A8;
+      --viz-grid: #EDE9E0;
+    }
+
+    /* Disclaimer banner — do not alter */
+    .ll-lab-disclaimer {
+      position: sticky; top: 0; z-index: 100; width: 100%; height: 24px;
+      display: flex; align-items: center; justify-content: center;
+      gap: 12px; flex-shrink: 0;
+      background: #b0fb16; border-bottom: 1px solid #ffffff;
+    }
+    .ll-lab-disclaimer-tape { flex-shrink: 0; height: 8px; line-height: 0; }
+    .ll-lab-disclaimer-center { display: flex; align-items: center; gap: 6px; }
+    .ll-lab-disclaimer-text {
+      font-family: var(--ll-lab-font); font-size: 12px;
+      line-height: 1; color: #000000; white-space: nowrap;
+    }
+    .ll-lab-disclaimer-text strong { font-weight: 700; }
+    .ll-lab-disclaimer-text span   { font-weight: 500; }
+
+    .ll-lab-header {
+      display: flex; align-items: center; gap: var(--ll-lab-space-3);
+      padding: 0 var(--ll-lab-space-6); height: 56px;
+      background: var(--ll-lab-surface); border-bottom: 1px solid var(--ll-lab-border); flex-shrink: 0;
+    }
+    .ll-lab-app-icon { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .ll-lab-header-name { font-family: var(--ll-lab-font); font-size: var(--ll-lab-text-base); font-weight: 600; color: var(--ll-lab-text); flex: 1; }
+    .ll-lab-header-actions { display: flex; align-items: center; gap: var(--ll-lab-space-2); }
+
+    .ll-card { background: var(--ll-lab-surface); border: 1px solid var(--ll-lab-border); border-radius: var(--ll-lab-radius-lg); padding: var(--ll-lab-space-6); font-family: var(--ll-lab-font); }
+    .ll-card-title { font-size: var(--ll-lab-text-base); font-weight: 600; color: var(--ll-lab-text); margin-bottom: var(--ll-lab-space-1); }
+    .ll-card-subtitle { font-size: var(--ll-lab-text-sm); color: var(--ll-lab-text-muted); margin-bottom: var(--ll-lab-space-4); line-height: 1.5; }
+    .ll-stat-card { background: var(--ll-lab-surface); border: 1px solid var(--ll-lab-border); border-radius: var(--ll-lab-radius-lg); padding: var(--ll-lab-space-5) var(--ll-lab-space-6); font-family: var(--ll-lab-font); }
+    .ll-stat-label { font-size: var(--ll-lab-text-sm); font-weight: 500; color: var(--ll-lab-text-muted); margin-bottom: var(--ll-lab-space-2); }
+    .ll-stat-value { font-size: var(--ll-lab-text-2xl); font-weight: 700; color: var(--ll-lab-text); line-height: 1; margin-bottom: var(--ll-lab-space-1); }
+    .ll-stat-note { font-size: var(--ll-lab-text-xs); color: var(--ll-lab-text-subtle); }
+    .ll-btn { font-family: var(--ll-lab-font); font-size: var(--ll-lab-text-sm); font-weight: 600; border: none; border-radius: var(--ll-lab-radius-sm); padding: 7px var(--ll-lab-space-4); cursor: pointer; transition: background var(--ll-lab-transition), opacity var(--ll-lab-transition), transform var(--ll-lab-transition); display: inline-flex; align-items: center; gap: var(--ll-lab-space-2); white-space: nowrap; line-height: 1; }
+    .ll-btn:active { transform: scale(0.98); }
+    .ll-btn-secondary { background: var(--ll-lab-surface); color: var(--ll-lab-text); border: 1px solid var(--ll-lab-border-strong); }
+    .ll-btn-secondary:hover { border-color: var(--ll-lab-accent); color: var(--ll-lab-accent); }
+    .ll-btn-ghost { background: transparent; color: var(--ll-lab-text-muted); }
+    .ll-btn-ghost:hover { background: var(--ll-lab-surface-subtle); color: var(--ll-lab-text); }
+    .ll-status { font-family: var(--ll-lab-font); font-size: var(--ll-lab-text-xs); font-weight: 600; padding: 3px 8px; border-radius: var(--ll-lab-radius-full); display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+    .ll-status::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+    .ll-status-success { background: var(--ll-lab-success-subtle); color: var(--ll-lab-success); }
+    .ll-status-warning { background: var(--ll-lab-warning-subtle); color: var(--ll-lab-warning); }
+    .ll-status-danger  { background: var(--ll-lab-danger-subtle);  color: var(--ll-lab-danger); }
+    .ll-status-neutral { background: var(--ll-lab-neutral-subtle); color: var(--ll-lab-text-muted); }
+    .ll-table { width: 100%; border-collapse: collapse; font-family: var(--ll-lab-font); font-size: var(--ll-lab-text-sm); }
+    .ll-table th { font-size: var(--ll-lab-text-xs); font-weight: 600; color: var(--ll-lab-text-muted); text-align: left; padding: var(--ll-lab-space-2) var(--ll-lab-space-3); border-bottom: 1px solid var(--ll-lab-border); white-space: nowrap; }
+    .ll-table td { padding: var(--ll-lab-space-3); color: var(--ll-lab-text); border-bottom: 1px solid var(--ll-lab-border); vertical-align: middle; }
+    .ll-table tr:last-child td { border-bottom: none; }
+    .ll-table tr:hover td { background: var(--ll-lab-surface-subtle); }
+    .ll-table td.num, .ll-table th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .ll-table td .muted { white-space: nowrap; }
+    .ll-section-heading { font-family: var(--ll-lab-font); font-size: var(--ll-lab-text-xs); font-weight: 600; color: var(--ll-lab-text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: var(--ll-lab-space-3); }
+    .ll-code { font-family: var(--ll-lab-font-mono); font-size: var(--ll-lab-text-sm); background: var(--ll-lab-surface-subtle); border: 1px solid var(--ll-lab-border); border-radius: var(--ll-lab-radius-sm); padding: var(--ll-lab-space-3) var(--ll-lab-space-4); color: var(--ll-lab-text); overflow-x: auto; line-height: 1.6; }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--ll-lab-font); background: var(--ll-lab-bg); color: var(--ll-lab-text); min-height: 100vh; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased; }
+    main { flex: 1; padding: var(--ll-lab-space-8) var(--ll-lab-space-6); max-width: 1180px; margin: 0 auto; width: 100%; }
+
+    /* dashboard layout */
+    .meta { display: flex; flex-wrap: wrap; gap: var(--ll-lab-space-2) var(--ll-lab-space-4); align-items: center; font-size: var(--ll-lab-text-sm); color: var(--ll-lab-text-muted); margin-bottom: var(--ll-lab-space-6); }
+    .meta .mono { font-family: var(--ll-lab-font-mono); font-size: var(--ll-lab-text-xs); color: var(--ll-lab-text); }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: var(--ll-lab-space-4); margin-bottom: var(--ll-lab-space-6); }
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--ll-lab-space-4); }
+    .span-12 { grid-column: span 12; } .span-8 { grid-column: span 8; } .span-7 { grid-column: span 7; } .span-6 { grid-column: span 6; } .span-5 { grid-column: span 5; } .span-4 { grid-column: span 4; }
+    @media (max-width: 900px) { .span-8, .span-7, .span-6, .span-5, .span-4 { grid-column: span 12; } }
+    .card-head { display: flex; align-items: flex-start; gap: var(--ll-lab-space-3); margin-bottom: var(--ll-lab-space-1); }
+    .card-head .ll-card-title { margin-bottom: 0; flex: 1; }
+    .persona { font-size: var(--ll-lab-text-xs); font-weight: 600; color: var(--ll-lab-accent); background: var(--ll-lab-accent-subtle); padding: 3px 8px; border-radius: var(--ll-lab-radius-full); white-space: nowrap; }
+    .try { margin-top: var(--ll-lab-space-4); padding-top: var(--ll-lab-space-3); border-top: 1px dashed var(--ll-lab-border); font-size: var(--ll-lab-text-xs); color: var(--ll-lab-text-subtle); line-height: 1.5; }
+    .try strong { color: var(--ll-lab-text-muted); font-weight: 600; }
+    .empty { font-size: var(--ll-lab-text-sm); color: var(--ll-lab-text-muted); background: var(--ll-lab-surface-subtle); border: 1px dashed var(--ll-lab-border); border-radius: var(--ll-lab-radius-md); padding: var(--ll-lab-space-4); line-height: 1.5; }
+    .scroll { overflow-x: auto; }
+    .path { font-family: var(--ll-lab-font-mono); font-size: var(--ll-lab-text-xs); color: var(--ll-lab-text); word-break: break-all; }
+    .muted { color: var(--ll-lab-text-muted); }
+    .subtle { color: var(--ll-lab-text-subtle); }
+    .chips { display: flex; flex-wrap: wrap; gap: var(--ll-lab-space-1); }
+    .chip { font-size: var(--ll-lab-text-xs); background: var(--ll-lab-neutral-subtle); color: var(--ll-lab-text-muted); padding: 2px 8px; border-radius: var(--ll-lab-radius-full); white-space: nowrap; }
+    .chip.service { background: var(--ll-lab-accent-subtle); color: var(--ll-lab-accent); }
+
+    /* charts */
+    .viz { position: relative; width: 100%; }
+    .viz svg { display: block; width: 100%; height: auto; overflow: visible; }
+    .viz text { font-family: var(--ll-lab-font); font-size: 11px; fill: var(--ll-lab-text-muted); }
+    .viz .grid line { stroke: var(--viz-grid); stroke-width: 1; }
+    .viz .axis line { stroke: var(--ll-lab-border); stroke-width: 1; }
+    .viz .val { fill: var(--ll-lab-text); font-weight: 600; }
+    .legend { display: flex; flex-wrap: wrap; gap: var(--ll-lab-space-4); font-size: var(--ll-lab-text-xs); color: var(--ll-lab-text-muted); margin-bottom: var(--ll-lab-space-3); }
+    .legend span::before { content: ''; display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; background: var(--c); }
+    .tip { position: absolute; pointer-events: none; background: var(--ll-lab-text); color: #fff; font-size: var(--ll-lab-text-xs); line-height: 1.5; padding: 6px 10px; border-radius: var(--ll-lab-radius-sm); white-space: nowrap; transform: translate(-50%, calc(-100% - 10px)); opacity: 0; transition: opacity var(--ll-lab-transition); z-index: 5; }
+    .tip.show { opacity: 1; }
+    .hbars { display: grid; grid-template-columns: minmax(90px, max-content) 1fr minmax(70px, max-content); gap: var(--ll-lab-space-2) var(--ll-lab-space-3); align-items: center; font-size: var(--ll-lab-text-sm); }
+    .hbars .lbl { color: var(--ll-lab-text); white-space: nowrap; }
+    .hbars .bar { height: 14px; background: var(--ll-lab-surface-subtle); border-radius: 4px; overflow: hidden; position: relative; }
+    .hbars .bar i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 4px; background: var(--c, var(--ll-lab-accent)); min-width: 2px; }
+    .hbars .bar i + i { left: auto; }
+    .hbars .v { text-align: right; font-variant-numeric: tabular-nums; color: var(--ll-lab-text); }
+    .hbars .v small { display: block; color: var(--ll-lab-text-subtle); font-size: var(--ll-lab-text-xs); }
+    .hours { display: grid; grid-template-columns: repeat(24, 1fr); gap: 2px; margin-top: var(--ll-lab-space-3); }
+    .hours i { display: block; height: 22px; border-radius: 3px; background: var(--viz-seq-1); }
+    .hours-axis { display: grid; grid-template-columns: repeat(24, 1fr); font-size: 10px; color: var(--ll-lab-text-subtle); margin-top: 4px; }
+    .hours-axis span:nth-child(6n+1) { visibility: visible; } .hours-axis span { visibility: hidden; }
+    .ticker li { display: grid; grid-template-columns: 62px 1fr; gap: var(--ll-lab-space-3); padding: var(--ll-lab-space-2) 0; border-bottom: 1px solid var(--ll-lab-border); font-size: var(--ll-lab-text-sm); align-items: baseline; }
+    .ticker li:last-child { border-bottom: none; }
+    .ticker time { font-family: var(--ll-lab-font-mono); font-size: var(--ll-lab-text-xs); color: var(--ll-lab-text-subtle); }
+    .ticker .act { font-weight: 600; font-size: var(--ll-lab-text-xs); margin-right: 6px; }
+    .act.w { color: var(--viz-writes); } .act.d { color: var(--viz-deletes); } .act.m { color: var(--ll-lab-text-muted); }
+    .flags { display: flex; flex-direction: column; gap: var(--ll-lab-space-2); }
+    .flag { display: flex; gap: var(--ll-lab-space-3); align-items: flex-start; font-size: var(--ll-lab-text-sm); line-height: 1.5; }
+    .flag .ll-status { margin-top: 2px; flex-shrink: 0; }
+    .notes li { font-size: var(--ll-lab-text-sm); color: var(--ll-lab-text-muted); line-height: 1.5; margin-left: 1.2em; margin-bottom: var(--ll-lab-space-1); }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <!-- Required #1: Disclaimer banner — do not modify -->
+  <div class="ll-lab-disclaimer">
+    <div class="ll-lab-disclaimer-tape" aria-hidden="true">
+      <svg width="85" height="8" viewBox="0 0 85 8" xmlns="http://www.w3.org/2000/svg" style="display:block">
+        <polygon points="7,0 14,0 22,8 15,8" fill="#000000"/>
+        <polygon points="21,0 28,0 36,8 29,8" fill="#000000"/>
+        <polygon points="35,0 42,0 50,8 43,8" fill="#000000"/>
+        <polygon points="49,0 56,0 64,8 57,8" fill="#000000"/>
+        <polygon points="63,0 70,0 78,8 71,8" fill="#000000"/>
+      </svg>
+    </div>
+    <div class="ll-lab-disclaimer-center">
+      <svg width="14" height="14" viewBox="0 0 13.333 14.667" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path fill="#000000" d="M 8.000057029724395 4.000020980834961 L 5.33339042663547 4.000020980834961 L 5.33339042663547 6.574890772501627 C 5.3314278990495465 6.808502892653147 5.320558133033611 7.022143463293712 5.26503105326527 7.228536605834961 C 5.2041813632853 7.4547109206517534 5.103601930056614 7.6685098807017 4.968807101994406 7.860047022501627 C 4.80486762988981 8.09292733669281 4.580499440500095 8.273159662882486 4.3262289923145305 8.485047022501627 L 2.5085205433726534 10.000020980834961 L 10.824926754041496 10.000020980834961 L 9.007218464045334 8.485047022501627 C 8.75294837348763 8.27315988143285 8.528579419171658 8.09292717774709 8.36464035436546 7.860047022501627 C 8.229843708361628 7.668507953484853 8.12926612784394 7.454707503318787 8.068416403094593 7.228536605834961 C 8.012889556777772 7.022143562634786 8.002019547997094 6.808503230412801 8.000057029724395 6.574890772501627 L 8.000057029724395 4.000020980834961 Z M 2.3333903392147137 11.333353678385416 C 1.991665951610035 11.333353678385416 1.9180143465281028 11.336793760458628 1.8698486835996466 11.34637451171875 C 1.6055369193031825 11.399025733272234 1.3990624412127224 11.605500082174936 1.346411196079262 11.86981201171875 C 1.3385832406573268 11.909165779749552 1.3350921548641599 11.96558419863383 1.3340414047075118 12.171244303385416 C 1.3351290911165885 12.391319712003071 1.3387525631688173 12.55459213256836 1.3496664043349857 12.68817138671875 C 1.3604111073915293 12.819637149572372 1.376194122653826 12.89109435180823 1.3906820283571055 12.932963053385416 C 1.4074240401110174 12.9712871859471 1.4272814450120315 13.007567656536898 1.450577860262423 13.04168701171875 C 1.4546547722330534 13.047660840054354 1.4580333742077138 13.054086051881313 1.4622966099830288 13.059916178385416 C 1.4825396767947598 13.087586904565493 1.5045222231664022 13.113860537608463 1.5287028583997941 13.138041178385416 C 1.5577604771793572 13.167098708450794 1.5903528127390736 13.192207227150599 1.6244059811180733 13.21551513671875 C 1.6585075037639943 13.238867484033108 1.694814189597773 13.258613572766382 1.7331299368592477 13.275410970052082 C 1.7748898837993616 13.28996805846691 1.8462837295627295 13.306265626102686 1.9785726393408212 13.31707763671875 C 2.1674641450060466 13.332510691136122 2.415818514447264 13.333353678385416 2.8001873620312203 13.333353678385416 L 10.533260094328645 13.333353678385416 C 10.9176289419126 13.333353678385416 11.16598305306703 13.332510693619648 11.354874658073328 13.31707763671875 C 11.486551140075061 13.306315694004297 11.557824981823142 13.289916791021822 11.599666318903756 13.275410970052082 C 11.638016425758597 13.258639605094988 11.67425435515274 13.238850556313992 11.70839027464493 13.21551513671875 C 11.714366476468852 13.21143177896738 11.720787250701104 13.208066283104321 11.726619440876984 13.20379638671875 C 11.754174386861155 13.183613566060862 11.780654315915424 13.162131311992804 11.804744439014355 13.138041178385416 C 11.833928742496314 13.108856963614622 11.85883598565099 13.075908372799555 11.88221839550058 13.04168701171875 C 11.905553789704198 13.007551106313864 11.925342852914554 12.971313176055748 11.942114227405899 12.932963053385416 C 11.95661992882051 12.891122072935104 11.973018927027788 12.819848289092382 11.983780893079162 12.68817138671875 C 11.994694684574794 12.554592788219452 11.997667146408016 12.391318082809448 11.998754851055493 12.171244303385416 C 11.997704085376801 11.965586920579273 11.994864035025962 11.909165851771832 11.987036101334887 11.86981201171875 C 11.934384334660797 11.605499784151712 11.727909702591676 11.399025668700537 11.463598613814503 11.34637451171875 C 11.41543349229489 11.336793843656778 11.341781425276972 11.333353678385416 11.000056958199435 11.333353678385416 L 2.3333903392147137 11.333353678385416 Z M 4.333390450477123 2.6666876475016275 L 9.000057005882741 2.6666876475016275 L 9.000057005882741 1.3333541552225747 L 4.333390450477123 1.3333541552225747 L 4.333390450477123 2.6666876475016275 Z M 10.333390307427203 2.800151189168294 C 10.333390850551353 2.8823706358671184 10.33412249955851 2.9840323825677233 10.326879890915755 3.0729376475016275 C 10.318975148570255 3.169686992963155 10.298582730527848 3.3086014489332833 10.224666351686029 3.4537970225016275 C 10.128793325931868 3.6419584155082703 9.975329101675898 3.7954233090082803 9.787166362116752 3.8912970225016275 C 9.641970672800824 3.9652134378751116 9.503056150603896 3.9856058477113643 9.40630699619707 3.993510564168294 C 9.382722961223699 3.9954318203963335 9.358166791901906 3.9951306274936846 9.333390331268857 3.996114730834961 L 9.333390331268857 6.334005355834961 C 9.333390331268857 6.737370729446411 9.33864342632341 6.817012170950571 9.356176789058923 6.882182439168294 C 9.376462992247754 6.957540512084961 9.41022199308535 7.028649672865867 9.455135120032926 7.092468897501627 C 9.493974248217114 7.147630885243415 9.551665157836675 7.202858507633209 9.861385110347255 7.460958480834961 L 12.326228801581305 9.514994939168293 C 12.58050032265045 9.726882894833881 12.80486741928837 9.907115002473194 12.96880691126118 10.139994939168293 C 13.103604650016806 10.331535081068674 13.204181460641184 10.545335014661152 13.265030862532045 10.771504720052082 C 13.320557907531011 10.977897961934406 13.331427733772472 11.191538174947102 13.333390235902245 11.425150553385416 L 13.333390235902245 11.866556803385416 C 13.333390235902245 11.97385659813881 13.331915683537611 12.076851109663645 13.33143711094881 12.175150553385416 C 13.331549516555626 12.226373096307118 13.333390235902245 12.27906800309817 13.333390235902245 12.333353678385416 C 13.333390235902245 12.611080924669901 13.336594817464018 12.847280124823252 13.294978778484703 13.056660970052082 C 13.262446906868616 13.220209022363026 13.208675253385811 13.375859667857489 13.139379823861107 13.52215576171875 C 13.131326134478918 13.539505599687496 13.12408566353186 13.5576302173237 13.11529128276875 13.57489013671875 C 13.112114093576327 13.581123836959401 13.10811428890422 13.586924428741137 13.104874616350434 13.593119303385416 C 13.09251013972605 13.61675756673018 13.079077859575369 13.639717062314352 13.065812117281748 13.66278076171875 C 13.053079548457038 13.684926196932793 13.040288377092041 13.706944853067396 13.026749618213064 13.728535970052082 C 13.009667393088993 13.755765184760092 12.99169821486067 13.782296334703762 12.973364202819193 13.808614095052082 C 12.964271277298682 13.821672860532997 12.955413259265566 13.834850929677485 12.946020453471114 13.847676595052082 C 12.92186112689772 13.88065085063378 12.896587764704767 13.912647475798925 12.870499621938322 13.94403076171875 C 12.86369347636799 13.952220872044563 12.857251148848349 13.960692596932251 12.850317330752834 13.968770345052082 C 12.784221240064817 14.045750925938288 12.712454154991818 14.117517987887064 12.635473585875065 14.183614095052082 C 12.62739583049724 14.190547907104094 12.61892411636652 14.196990249678493 12.610734003131563 14.20379638671875 C 12.579350722927021 14.22988453755776 12.54735409107415 14.255157887935637 12.51437983876214 14.279317220052082 C 12.501554168726274 14.288710024828712 12.488376097412447 14.297568049281834 12.475317339693454 14.306660970052082 C 12.44899958245612 14.324994986255962 12.422468428177943 14.34296415746212 12.395239216602649 14.36004638671875 C 12.373648095165677 14.373585168272257 12.351629409753711 14.38637630144755 12.329484009837028 14.39910888671875 C 12.306420310982507 14.412374631812176 12.283460815945729 14.425806908557812 12.25982255316454 14.43817138671875 C 12.253627683014129 14.44141107176741 12.247827078953055 14.44541085201005 12.241593386932486 14.448588053385416 C 12.224333640554054 14.457382326945662 12.206208673172693 14.46462299550573 12.188859013189761 14.472676595052082 C 12.042562843343582 14.541972065965334 11.886912420110448 14.595743730664253 11.72336423262126 14.628275553385416 C 11.51398355133013 14.669891613225142 11.277783681288868 14.66668701171875 11.000056958199435 14.66668701171875 L 2.3333903392147137 14.66668701171875 C 2.0556630995517056 14.66668701171875 1.8194639050297343 14.669891593356926 1.6100830647928888 14.628275553385416 C 1.4463365428529384 14.595704302191734 1.2903868149032012 14.542097618182499 1.1439372425732426 14.472676595052082 C 1.1267671974577693 14.464698576678831 1.1089358574507309 14.457291743407646 1.091853910481662 14.448588053385416 C 1.085448689336036 14.445323427207768 1.0793379294088596 14.441501976301273 1.072973702598464 14.43817138671875 C 1.0493427041331833 14.42580200980107 1.0263686730140078 14.412379122028748 1.0033122459259751 14.39910888671875 C 0.9811742220839066 14.386372223496437 0.9591407994238713 14.373588852584362 0.9375570391603546 14.36004638671875 C 0.910337456218489 14.342959730575481 0.8837871166957326 14.32499876866738 0.8574789160695495 14.306660970052082 C 0.844425108019482 14.29756631143391 0.8312371659283626 14.288711599384744 0.8184164170008641 14.279317220052082 C 0.7854551560175793 14.255154110491274 0.7534328022775725 14.229887219766775 0.7220622526314401 14.20379638671875 C 0.7138756057790241 14.196989661703507 0.7053969824767286 14.190548418710629 0.6973226698879393 14.183614095052082 C 0.6204836270297771 14.117606590191523 0.5491187789254011 14.04562598466873 0.48312996666131425 13.968770345052082 C 0.4761961479449176 13.960692598794896 0.46975382166704016 13.952220868940154 0.46294767547582677 13.94403076171875 C 0.43685953022585416 13.912647473315397 0.41158616803290105 13.880650855600832 0.38742684394303495 13.847676595052082 C 0.3780340331815291 13.834850934644539 0.36917602508251995 13.821672853082417 0.3600830945949552 13.808614095052082 C 0.34174908379524177 13.782296332220236 0.3237799217098439 13.755765189727146 0.30669769906929956 13.728535970052082 C 0.29315892280563327 13.706944863001505 0.2803677899353014 13.684926179548105 0.26763520000061414 13.66278076171875 C 0.25436946143228334 13.639717057347298 0.2409371725892597 13.616757571697235 0.2285727009319287 13.593119303385416 C 0.22533301999623956 13.586924432466427 0.22133323239837877 13.58112383261323 0.2181560345136126 13.57489013671875 C 0.20936167734400707 13.557630257060131 0.20212116231434904 13.539505559951067 0.19406749342125656 13.52215576171875 C 0.12477203906128474 13.375859508911768 0.07100031355620132 13.220209250847498 0.03846853631413284 13.056660970052082 C -0.003147641742683692 12.847279906272886 0.000057080080147921844 12.611080507437388 0.000057080080147921844 12.333353678385416 C 0.000057080080147921844 12.279068022966385 0.0018977991939367943 12.226373111208279 0.0020102050917898523 12.175150553385416 C 0.0015316326970146398 12.076851109663645 0.000057080080147921844 11.97385659813881 0.000057080080147921844 11.866556803385416 L 0.000057080080147921844 11.425150553385416 C 0.0020196061138670826 11.191538333892822 0.012889310410280228 10.977897802988688 0.06841645475031848 10.771504720052082 C 0.12926587154234018 10.54533286889394 0.22984441566842917 10.33153345187505 0.36464038615296845 10.139994939168293 C 0.5285797092459555 9.907114923000334 0.7529476105465611 9.726882497469584 1.0072184958328436 9.514994939168293 L 3.4720623460126094 7.460958480834961 C 3.7817799143374553 7.2028606335322065 3.8394727064703345 7.147631163398424 3.8783123363269376 7.092468897501627 C 3.9232271719409564 7.028647020459174 3.9569857667219193 6.957538063327471 3.977270667300941 6.882182439168294 C 3.9948039778823907 6.81701282163461 4.000057125091008 6.73737096786499 4.000057125091008 6.334005355834961 L 4.000057125091008 3.996114730834961 C 3.975280664457958 3.9951306274160743 3.9507244951361655 3.9954318203963335 3.9271404601627946 3.993510564168294 C 3.830391315690076 3.9856058489531274 3.691476793493147 3.9652134428421655 3.5462810942431116 3.8912970225016275 C 3.358118354683965 3.7954233090082803 3.2046541304279956 3.6419584155082703 3.108781104673835 3.4537970225016275 C 3.034864730799069 3.3086014588673907 3.014472309031371 3.1696870028972626 3.006567565444108 3.0729376475016275 C 2.999324957422234 2.9840323825677233 3.0000566058084717 2.8823706408341723 3.0000571489326604 2.800151189168294 L 3.0000571489326604 1.1998906930287678 C 3.0000566058086613 1.1176712463299432 2.9993249580431156 1.0160094996293385 3.006567565444108 0.9271042346954346 C 3.0144723059269625 0.830354909102122 3.0348647258320156 0.6914404332637787 3.108781104673835 0.5462448596954346 C 3.204654140362103 0.35808342695236206 3.358118374552179 0.20461856325467426 3.5462810942431116 0.10874485969543457 L 3.653051925030852 0.0631719430287679 C 3.7579834359975357 0.025791659951210022 3.854474070164973 0.012468388924996058 3.9271404601627946 0.006531316787004471 C 4.016045703108835 -0.0007112814734379445 4.117707452352709 0.000020356295218941035 4.199926911992447 0.00002090008153269688 L 9.133520544367416 0.00002090008153269688 C 9.2157399990401 0.00002035629525683665 9.317401743316923 -0.0007112820943196612 9.40630699619707 0.006531316787004471 C 9.478973381227839 0.012468388304114342 9.57546401042822 0.02579165746768315 9.680395531329012 0.0631719430287679 L 9.787166362116752 0.10874485969543457 L 9.856176777138097 0.14780735969543457 C 9.990415056777092 0.23015321791172028 10.103258418563877 0.3429968257745107 10.185603852617344 0.4772344430287679 L 10.224666351686029 0.5462448596954346 L 10.270239267266163 0.6530156930287678 C 10.307619527100773 0.7579470773537953 10.320942797809336 0.8544377287228903 10.326879890915755 0.9271042346954346 C 10.334122498316749 1.0160094996293385 10.333390850716048 1.1176712363958359 10.333390307427203 1.1998906930287678 L 10.333390307427203 2.800151189168294 Z"/>
+      </svg>
+      <p class="ll-lab-disclaimer-text">
+        <strong>LucidLink Lab</strong><span>&nbsp;&nbsp;·&nbsp;&nbsp;Not an official product</span>
+      </p>
+    </div>
+    <div class="ll-lab-disclaimer-tape" aria-hidden="true">
+      <svg width="85" height="8" viewBox="0 0 85 8" xmlns="http://www.w3.org/2000/svg" style="display:block">
+        <polygon points="7,0 14,0 22,8 15,8" fill="#000000"/>
+        <polygon points="21,0 28,0 36,8 29,8" fill="#000000"/>
+        <polygon points="35,0 42,0 50,8 43,8" fill="#000000"/>
+        <polygon points="49,0 56,0 64,8 57,8" fill="#000000"/>
+        <polygon points="63,0 70,0 78,8 71,8" fill="#000000"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Required #2: App header -->
+  <header class="ll-lab-header">
+    <div class="ll-lab-app-icon" aria-hidden="true">
+      <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1.5" y="1.5" width="23" height="23" rx="6" stroke="#5E53E0" stroke-width="2"/>
+        <rect x="6" y="14" width="3" height="6" rx="1" fill="#5E53E0"/>
+        <rect x="11.5" y="9" width="3" height="11" rx="1" fill="#5E53E0"/>
+        <rect x="17" y="6" width="3" height="14" rx="1" fill="#1baf7a"/>
+      </svg>
+    </div>
+    <span class="ll-lab-header-name" id="app-name">Filespace Dashboard</span>
+    <div class="ll-lab-header-actions">
+      <button class="ll-btn ll-btn-ghost" id="toggle-tables" type="button" aria-pressed="false">Show tables</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="empty" id="nojs">This dashboard draws its tiles with JavaScript. If you are seeing this line, the viewer did not run scripts: macOS Quick Look, some email and chat previews, and browsers with scripts disabled all behave that way. Open <code>index.html</code> in Chrome, Safari, Edge or Firefox from the mounted drive.</div>
+    <div class="meta" id="meta"></div>
+    <section class="stats" id="stats" aria-label="Filespace totals"></section>
+    <section class="grid" id="tiles"></section>
+  </main>
+
+  <!-- render.py replaces the contents of this block with the snapshot -->
+  <script id="ll-snapshot" type="application/json">{}</script>
+
+  <script>
+  (function () {
+    'use strict';
+    var raw = document.getElementById('ll-snapshot').textContent;
+    var S;
+    try { S = JSON.parse(raw); } catch (e) { S = {}; }
+    var main = document.querySelector('main');
+    var nojs = document.getElementById('nojs'); if (nojs) nojs.remove();
+    if (!S || !S.schema) {
+      main.innerHTML = '<div class="empty">No snapshot embedded. Run <code>scripts/render.py --snapshot out/snapshot.json</code> and open the resulting index.html.</div>';
+      return;
+    }
+
+    /* ---------- helpers */
+    function el(tag, attrs, children) {
+      var n = document.createElement(tag);
+      if (attrs) Object.keys(attrs).forEach(function (k) {
+        if (k === 'class') n.className = attrs[k];
+        else if (k === 'text') n.textContent = attrs[k];
+        else if (k === 'html') n.innerHTML = attrs[k];
+        else n.setAttribute(k, attrs[k]);
+      });
+      (children || []).forEach(function (c) { if (c) n.appendChild(typeof c === 'string' ? document.createTextNode(c) : c); });
+      return n;
+    }
+    function fmtBytes(b) {
+      if (b === null || b === undefined) return 'n/a';
+      var u = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'], i = 0, v = b;
+      while (v >= 1000 && i < u.length - 1) { v /= 1024; i++; }
+      return (i === 0 ? v : v.toFixed(v >= 100 ? 0 : 1)) + ' ' + u[i];
+    }
+    function fmtInt(n) { return (n === null || n === undefined) ? 'n/a' : Number(n).toLocaleString('en-US'); }
+    function fmtWhen(iso) {
+      if (!iso) return 'never in window';
+      var d = new Date(iso), diff = (Date.now() - d.getTime()) / 1000;
+      if (diff < 3600) return Math.max(1, Math.round(diff / 60)) + ' min ago';
+      if (diff < 86400) return Math.round(diff / 3600) + ' h ago';
+      if (diff < 86400 * 14) return Math.round(diff / 86400) + ' d ago';
+      return d.toISOString().slice(0, 10);
+    }
+    function shortDay(iso) { var d = new Date(iso + 'T00:00:00Z'); return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getUTCDay()] + ' ' + d.getUTCDate(); }
+    function tail(path, n) { n = n || 60; return path.length > n ? '…' + path.slice(-n + 1) : path; }
+    function card(opts) {
+      var head = el('div', { class: 'card-head' }, [
+        el('div', { class: 'll-card-title', text: opts.title }),
+        opts.persona ? el('span', { class: 'persona', text: opts.persona }) : null
+      ]);
+      var c = el('div', { class: 'll-card ' + (opts.span || 'span-6') }, [
+        head,
+        opts.subtitle ? el('div', { class: 'll-card-subtitle', text: opts.subtitle }) : null
+      ]);
+      (opts.body || []).forEach(function (b) { if (b) c.appendChild(b); });
+      if (opts.tryNext) c.appendChild(el('div', { class: 'try', html: '<strong>Try next:</strong> ' + opts.tryNext }));
+      return c;
+    }
+    function table(cols, rows, cls) {
+      var t = el('table', { class: 'll-table ' + (cls || '') });
+      var thead = el('thead'), tr = el('tr');
+      cols.forEach(function (c) { tr.appendChild(el('th', { class: c.num ? 'num' : '', text: c.label })); });
+      thead.appendChild(tr); t.appendChild(thead);
+      var tb = el('tbody');
+      rows.forEach(function (r) {
+        var row = el('tr');
+        cols.forEach(function (c) {
+          var v = c.render ? c.render(r) : r[c.key];
+          var td = el('td', { class: c.num ? 'num' : '' });
+          if (v instanceof Node) td.appendChild(v); else td.textContent = v;
+          row.appendChild(td);
+        });
+        tb.appendChild(row);
+      });
+      t.appendChild(tb);
+      return el('div', { class: 'scroll' }, [t]);
+    }
+    var tip = el('div', { class: 'tip', role: 'status' });
+    document.body.appendChild(tip);
+    function showTip(x, y, html) { tip.innerHTML = html; tip.style.left = x + 'px'; tip.style.top = y + 'px'; tip.classList.add('show'); }
+    function hideTip() { tip.classList.remove('show'); }
+
+    /* ---------- header + meta */
+    document.getElementById('app-name').textContent = 'Filespace Dashboard · ' + (S.title || 'filespace');
+    document.title = (S.title || 'Filespace') + ' Dashboard — LucidLink Lab';
+    var meta = document.getElementById('meta');
+    var src = S.source || {};
+    meta.appendChild(el('span', { html: 'Snapshot <span class="mono">' + (S.generated_at || '') + '</span>' }));
+    meta.appendChild(el('span', { html: 'Window <span class="mono">' + S.window_days + ' days</span>' }));
+    meta.appendChild(el('span', { html: 'Budget <span class="mono">' + S.budget + '</span>' }));
+    meta.appendChild(el('span', { html: 'Source <span class="mono">' + (src.mode || '?') + (src.filespace ? ' · ' + src.filespace : '') + '</span>' }));
+
+    /* ---------- stat cards */
+    var st = S.stats || {}, act = S.activity || {};
+    var stats = document.getElementById('stats');
+    function stat(label, value, note) {
+      stats.appendChild(el('div', { class: 'll-stat-card' }, [
+        el('div', { class: 'll-stat-label', text: label }),
+        el('div', { class: 'll-stat-value', text: value }),
+        el('div', { class: 'll-stat-note', text: note || '' })
+      ]));
+    }
+    stat('Files', fmtInt(st.files), fmtInt(st.dirs) + ' folders');
+    stat('Logical size', fmtBytes(st.data_bytes), 'what the files add up to');
+    var ratio = (st.storage_bytes && st.data_bytes) ? (st.storage_bytes / st.data_bytes) : null;
+    stat('Stored size', fmtBytes(st.storage_bytes), ratio ? (ratio < 1 ? Math.round((1 - ratio) * 100) + '% saved by dedup and compression' : Math.round((ratio - 1) * 100) + '% overhead on stored bytes') : 'needs MCP or SDK stats');
+    stat('Connect files', st.external_files === null || st.external_files === undefined ? 'n/a' : fmtInt(st.external_files), st.external_bytes ? fmtBytes(st.external_bytes) + ' linked, not copied' : 'external files linked in');
+    var humans = (act.by_actor || []).filter(function (a) { return a.kind === 'human'; }).length;
+    var services = (act.by_actor || []).filter(function (a) { return a.kind === 'service'; }).length;
+    stat('Actors', fmtInt(humans + services), humans + ' human · ' + services + ' service account' + (services === 1 ? '' : 's'));
+    stat('Audit events', fmtInt(act.events), 'last ' + S.window_days + ' days');
+
+    /* ---------- tiles */
+    var tiles = document.getElementById('tiles');
+    var tableViews = [];
+
+    /* 1. Filespace Pulse: stacked bars by day */
+    (function pulse() {
+      var days = act.by_day || [];
+      var series = [
+        { key: 'reads', label: 'Reads', c: 'var(--viz-reads)' },
+        { key: 'writes', label: 'Writes', c: 'var(--viz-writes)' },
+        { key: 'deletes', label: 'Deletes', c: 'var(--viz-deletes)' }
+      ];
+      var body = [];
+      if (!days.length || !act.events) {
+        body.push(el('div', { class: 'empty', text: 'No audit events in the window. Enable the audit trail on this filespace and the pulse appears on the next snapshot.' }));
+      } else {
+        var legend = el('div', { class: 'legend' });
+        series.forEach(function (s) { legend.appendChild(el('span', { style: '--c:' + s.c, text: s.label })); });
+        body.push(legend);
+        var W = 640, H = 220, padL = 44, padR = 8, padT = 14, padB = 28;
+        var innerW = W - padL - padR, innerH = H - padT - padB;
+        var max = Math.max.apply(null, days.map(function (d) { return d.reads + d.writes + d.deletes; }).concat([1]));
+        var svgNS = 'http://www.w3.org/2000/svg';
+        var svg = document.createElementNS(svgNS, 'svg');
+        svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+        svg.setAttribute('role', 'img');
+        svg.setAttribute('aria-label', 'Audit events per day, stacked reads, writes and deletes');
+        var grid = document.createElementNS(svgNS, 'g'); grid.setAttribute('class', 'grid');
+        var ticks = 4;
+        for (var i = 0; i <= ticks; i++) {
+          var y = padT + innerH - (innerH * i / ticks);
+          var ln = document.createElementNS(svgNS, 'line');
+          ln.setAttribute('x1', padL); ln.setAttribute('x2', W - padR); ln.setAttribute('y1', y); ln.setAttribute('y2', y);
+          grid.appendChild(ln);
+          var tx = document.createElementNS(svgNS, 'text');
+          tx.setAttribute('x', padL - 8); tx.setAttribute('y', y + 4); tx.setAttribute('text-anchor', 'end');
+          tx.textContent = fmtInt(Math.round(max * i / ticks));
+          grid.appendChild(tx);
+        }
+        svg.appendChild(grid);
+        var slot = innerW / days.length, bw = Math.min(46, slot * 0.6);
+        var maxIdx = days.reduce(function (m, d, i, a) { return (d.reads + d.writes + d.deletes) > (a[m].reads + a[m].writes + a[m].deletes) ? i : m; }, 0);
+        days.forEach(function (d, i) {
+          var x = padL + slot * i + (slot - bw) / 2, yTop = padT + innerH, total = d.reads + d.writes + d.deletes;
+          var g = document.createElementNS(svgNS, 'g');
+          series.forEach(function (s, si) {
+            var h = innerH * (d[s.key] / max);
+            if (h <= 0) return;
+            var r = document.createElementNS(svgNS, 'rect');
+            var gap = (si > 0 && h > 2) ? 2 : 0;
+            r.setAttribute('x', x); r.setAttribute('width', bw);
+            r.setAttribute('y', yTop - h + gap); r.setAttribute('height', Math.max(0, h - gap));
+            r.setAttribute('fill', s.c);
+            if (si === 2 || (si === 1 && !d.deletes) || (si === 0 && !d.writes && !d.deletes)) { r.setAttribute('rx', 4); r.setAttribute('ry', 4); }
+            g.appendChild(r);
+            yTop -= h;
+          });
+          if (i === maxIdx && total) {
+            var v = document.createElementNS(svgNS, 'text');
+            v.setAttribute('x', x + bw / 2); v.setAttribute('y', yTop - 5); v.setAttribute('text-anchor', 'middle'); v.setAttribute('class', 'val');
+            v.textContent = fmtInt(total);
+            g.appendChild(v);
+          }
+          var lbl = document.createElementNS(svgNS, 'text');
+          lbl.setAttribute('x', x + bw / 2); lbl.setAttribute('y', H - 8); lbl.setAttribute('text-anchor', 'middle');
+          lbl.textContent = shortDay(d.day);
+          g.appendChild(lbl);
+          var hit = document.createElementNS(svgNS, 'rect');
+          hit.setAttribute('x', padL + slot * i); hit.setAttribute('width', slot); hit.setAttribute('y', padT); hit.setAttribute('height', innerH);
+          hit.setAttribute('fill', 'transparent');
+          hit.addEventListener('mousemove', function (ev) {
+            var rect = svg.getBoundingClientRect();
+            var px = rect.left + (x + bw / 2) / W * rect.width + window.scrollX;
+            var py = rect.top + (padT + innerH - innerH * total / max) / H * rect.height + window.scrollY;
+            showTip(px, py, '<strong>' + d.day + '</strong><br>' + fmtInt(d.reads) + ' reads · ' + fmtInt(d.writes) + ' writes · ' + fmtInt(d.deletes) + ' deletes');
+          });
+          hit.addEventListener('mouseleave', hideTip);
+          g.appendChild(hit);
+          svg.appendChild(g);
+        });
+        var axis = document.createElementNS(svgNS, 'line');
+        axis.setAttribute('class', 'axis'); axis.setAttribute('x1', padL); axis.setAttribute('x2', W - padR); axis.setAttribute('y1', padT + innerH); axis.setAttribute('y2', padT + innerH);
+        axis.setAttribute('stroke', '#D8D0C0');
+        svg.appendChild(axis);
+        body.push(el('div', { class: 'viz' }, [svg]));
+        var tv = table([
+          { label: 'Day', key: 'day' },
+          { label: 'Reads', key: 'reads', num: true, render: function (r) { return fmtInt(r.reads); } },
+          { label: 'Writes', key: 'writes', num: true, render: function (r) { return fmtInt(r.writes); } },
+          { label: 'Deletes', key: 'deletes', num: true, render: function (r) { return fmtInt(r.deletes); } }
+        ], days);
+        tv.hidden = true; tableViews.push(tv); body.push(tv);
+        if (act.by_hour && act.by_hour.some(function (n) { return n > 0; })) {
+          var hmax = Math.max.apply(null, act.by_hour);
+          var hours = el('div', { class: 'hours', role: 'img', 'aria-label': 'Events by hour of day, UTC' });
+          act.by_hour.forEach(function (n, h) {
+            var step = n === 0 ? 1 : 1 + Math.min(5, Math.ceil(5 * n / hmax));
+            var cell = el('i', { style: 'background: var(--viz-seq-' + step + ')', title: String(h).padStart(2, '0') + ':00 UTC · ' + fmtInt(n) + ' events' });
+            hours.appendChild(cell);
+          });
+          var hax = el('div', { class: 'hours-axis' });
+          for (var h = 0; h < 24; h++) hax.appendChild(el('span', { text: String(h).padStart(2, '0') }));
+          body.push(el('div', { class: 'll-stat-label', style: 'margin-top: var(--ll-lab-space-4)', text: 'By hour of day (UTC)' }));
+          body.push(hours); body.push(hax);
+        }
+      }
+      tiles.appendChild(card({
+        span: 'span-7', title: 'Filespace pulse', persona: 'Production lead',
+        subtitle: 'Every read, write and delete the filespace recorded, by day. A mounted drive cannot show reads; the audit trail can.',
+        body: body,
+        tryNext: 'split the pulse per project folder, or overlay render-farm hours to see when agents work and when people do.'
+      }));
+    })();
+
+    /* 2. Actors: humans vs service accounts */
+    (function actors() {
+      var list = act.by_actor || [];
+      var body = [];
+      if (!list.length) {
+        body.push(el('div', { class: 'empty', text: 'No actors in the window.' }));
+      } else {
+        var max = Math.max.apply(null, list.map(function (a) { return a.events; }));
+        var bars = el('div', { class: 'hbars' });
+        list.slice(0, 10).forEach(function (a) {
+          var name = a.label || a.name;
+          bars.appendChild(el('div', { class: 'lbl' }, [
+            el('span', { class: 'chip ' + (a.kind === 'service' ? 'service' : ''), text: a.kind === 'service' ? 'agent' : 'human' }), ' ',
+            el('span', { text: name.length > 26 ? name.slice(0, 25) + '…' : name, title: name })
+          ]));
+          var bar = el('div', { class: 'bar', title: fmtInt(a.reads) + ' reads · ' + fmtInt(a.writes) + ' writes · ' + fmtInt(a.deletes) + ' deletes' });
+          var total = a.events || 1;
+          var segs = [['reads', 'var(--viz-reads)'], ['writes', 'var(--viz-writes)'], ['deletes', 'var(--viz-deletes)']];
+          var left = 0;
+          segs.forEach(function (sg) {
+            var w = (a[sg[0]] / max) * 100;
+            if (w <= 0) return;
+            var seg = el('i', { style: 'left:' + left + '%; width:' + w + '%; --c:' + sg[1] + '; position:absolute' });
+            bar.appendChild(seg);
+            left += w;
+          });
+          bars.appendChild(bar);
+          bars.appendChild(el('div', { class: 'v', html: fmtInt(a.events) + '<small>last seen ' + fmtWhen(a.last_seen) + '</small>' }));
+        });
+        body.push(bars);
+        if (!list.some(function (a) { return a.kind === 'service'; })) {
+          body.push(el('div', { class: 'empty', style: 'margin-top: var(--ll-lab-space-4)', text: 'No service accounts appear yet. Point an agent at this filespace through the MCP Server with a collaborator service account, and it shows up here as its own actor with its own audit line.' }));
+        }
+      }
+      tiles.appendChild(card({
+        span: 'span-5', title: 'Who is here, human or agent', persona: 'Developer',
+        subtitle: 'Each login and each service account is a separate actor in the audit trail. Agents are accountable by construction.',
+        body: body,
+        tryNext: 'give every agent its own scoped, expiring service account, then chart which files each one touched.'
+      }));
+    })();
+
+    /* 3. Who is working where: folders */
+    (function folders() {
+      var rows = (S.folders || []).filter(function (f) { return f.files || f.reads || f.writes || f.deletes; }).slice(0, 12);
+      var body = [];
+      if (!rows.length) body.push(el('div', { class: 'empty', text: 'No folder activity recorded.' }));
+      else body.push(table([
+        { label: 'Folder', render: function (r) { return el('span', { class: 'path', text: r.path === '/' ? '/ (root files)' : r.path }); } },
+        { label: 'Files', num: true, render: function (r) { return fmtInt(r.files); } },
+        { label: 'Size', num: true, render: function (r) { return fmtBytes(r.bytes); } },
+        { label: 'Reads', num: true, render: function (r) { return fmtInt(r.reads); } },
+        { label: 'Writes', num: true, render: function (r) { return fmtInt(r.writes + r.deletes); } },
+        { label: 'Last write', render: function (r) { return el('span', { class: 'muted', text: fmtWhen(r.last_write) }); } },
+        { label: 'Who', render: function (r) {
+            var c = el('div', { class: 'chips' });
+            (r.writers || []).forEach(function (w) { c.appendChild(el('span', { class: 'chip' + (w.indexOf('@') === -1 ? ' service' : ''), text: w.length > 22 ? w.slice(0, 21) + '…' : w, title: w })); });
+            if (!(r.writers || []).length) c.appendChild(el('span', { class: 'subtle', text: '·' }));
+            return c;
+          } }
+      ], rows));
+      tiles.appendChild(card({
+        span: 'span-12', title: 'Who is working where', persona: 'Production lead',
+        subtitle: 'Top-level folders ranked by writes in the window, with the people and agents who made them.',
+        body: body,
+        tryNext: 'set folders.depth to 2 in the config to see per-show or per-client folders, or add currently held locks from the MCP list_locks_held tool.'
+      }));
+    })();
+
+    /* 4. Cold and hot map */
+    (function cold() {
+      var c = S.cold || {}, buckets = c.buckets || [];
+      var body = [];
+      var totalB = buckets.reduce(function (s, b) { return s + b.bytes; }, 0) || 1;
+      var bars = el('div', { class: 'hbars' });
+      buckets.forEach(function (b, i) {
+        bars.appendChild(el('div', { class: 'lbl', text: b.label }));
+        var bar = el('div', { class: 'bar', title: fmtInt(b.files) + ' files' });
+        bar.appendChild(el('i', { style: 'width:' + (b.bytes / totalB * 100) + '%; --c: var(--viz-seq-' + Math.min(6, i + 1) + ')' }));
+        bars.appendChild(bar);
+        bars.appendChild(el('div', { class: 'v', html: fmtBytes(b.bytes) + '<small>' + fmtInt(b.files) + ' files</small>' }));
+      });
+      body.push(el('div', { class: 'll-stat-label', text: 'Bytes by time since last modification' }));
+      body.push(bars);
+      var cands = c.candidates || [];
+      if (cands.length) {
+        body.push(el('div', { class: 'll-stat-label', style: 'margin-top: var(--ll-lab-space-5)', text: 'Archive candidates: ' + (c.candidate_rule || '') }));
+        body.push(table([
+          { label: 'File', render: function (r) { return el('span', { class: 'path', text: tail(r.path, 64), title: r.path }); } },
+          { label: 'Size', num: true, render: function (r) { return fmtBytes(r.bytes); } },
+          { label: 'Modified', render: function (r) { return el('span', { class: 'muted', text: (r.mtime || '').slice(0, 10) }); } }
+        ], cands.slice(0, 8)));
+      } else {
+        body.push(el('div', { class: 'empty', style: 'margin-top: var(--ll-lab-space-4)', text: 'No archive candidates under the current rule (' + (c.candidate_rule || '') + ').' }));
+      }
+      tiles.appendChild(card({
+        span: 'span-6', title: 'Cold and hot', persona: 'Storage admin',
+        subtitle: 'Where the bytes sit on the age curve. Modification time from the tree; add audit reads to find data nobody even opens.',
+        body: body,
+        tryNext: 'ask the agent for "files over 1 GB not read in 180 days" using the audit trail, then move them to a Connect-linked archive bucket.'
+      }));
+    })();
+
+    /* 5. Storage mix by extension */
+    (function ext() {
+      var rows = (S.extensions || []).slice(0, 8);
+      var body = [];
+      if (!rows.length) body.push(el('div', { class: 'empty', text: 'No files walked.' }));
+      else {
+        var max = Math.max.apply(null, rows.map(function (r) { return r.bytes; })) || 1;
+        var bars = el('div', { class: 'hbars' });
+        rows.forEach(function (r) {
+          bars.appendChild(el('div', { class: 'lbl', html: '<code style="font-family: var(--ll-lab-font-mono); font-size: 12px">' + r.ext + '</code>' }));
+          var bar = el('div', { class: 'bar' });
+          bar.appendChild(el('i', { style: 'width:' + (r.bytes / max * 100) + '%' }));
+          bars.appendChild(bar);
+          bars.appendChild(el('div', { class: 'v', html: fmtBytes(r.bytes) + '<small>' + fmtInt(r.files) + ' files</small>' }));
+        });
+        body.push(bars);
+      }
+      var largest = (S.largest || []).slice(0, 5);
+      if (largest.length) {
+        body.push(el('div', { class: 'll-stat-label', style: 'margin-top: var(--ll-lab-space-5)', text: 'Largest files' }));
+        body.push(table([
+          { label: 'File', render: function (r) { return el('span', { class: 'path', text: tail(r.path, 64), title: r.path }); } },
+          { label: 'Size', num: true, render: function (r) { return fmtBytes(r.bytes); } }
+        ], largest));
+      }
+      tiles.appendChild(card({
+        span: 'span-6', title: 'What the bytes are', persona: 'Storage admin',
+        subtitle: 'Size by file type. Stored size in the header is what you actually pay for after dedup and compression.',
+        body: body,
+        tryNext: 'group by codec or camera using the MCP grep_files tool on sidecar metadata, or by Connect data store.'
+      }));
+    })();
+
+    /* 6. Recent changes ticker */
+    (function recent() {
+      var rows = S.recent || [];
+      var body = [];
+      if (!rows.length) body.push(el('div', { class: 'empty', text: 'No writes, moves or deletes in the window.' }));
+      else {
+        var ul = el('ul', { class: 'ticker', style: 'list-style: none' });
+        rows.slice(0, 15).forEach(function (r) {
+          var cls = /Delete/.test(r.action) ? 'd' : /Move/.test(r.action) ? 'm' : 'w';
+          ul.appendChild(el('li', {}, [
+            el('time', { datetime: r.ts, text: (r.ts || '').slice(5, 16).replace('T', ' ') }),
+            el('div', {}, [
+              el('span', { class: 'act ' + cls, text: r.action.replace(/File|Directory/g, function (m) { return m === 'File' ? '' : 'Dir '; }) }),
+              el('span', { class: 'path', text: tail(r.path, 70), title: r.path }),
+              el('div', { class: 'subtle', style: 'font-size: var(--ll-lab-text-xs)', text: r.user })
+            ])
+          ]));
+        });
+        body.push(ul);
+      }
+      tiles.appendChild(card({
+        span: 'span-7', title: 'What just changed', persona: 'Production lead',
+        subtitle: 'The newest writes, moves and deletes, with who did them. One save can fan out into several audit rows; these are collapsed per second.',
+        body: body,
+        tryNext: 'make this live: subscribe_changes on a folder through the MCP Server and poll it, or wire the upcoming event stream when it ships.'
+      }));
+    })();
+
+    /* 7. Flags and notes */
+    (function flags() {
+      var fl = S.flags || [], notes = S.notes || [];
+      var body = [];
+      if (fl.length) {
+        var wrap = el('div', { class: 'flags' });
+        fl.forEach(function (f) {
+          var lvl = { warning: 'warning', danger: 'danger', success: 'success' }[f.level] || 'neutral';
+          wrap.appendChild(el('div', { class: 'flag' }, [
+            el('span', { class: 'll-status ll-status-' + lvl, text: lvl === 'neutral' ? 'note' : lvl }),
+            el('span', { text: f.text })
+          ]));
+        });
+        body.push(wrap);
+      } else body.push(el('div', { class: 'empty', text: 'Nothing flagged in this window.' }));
+      if (notes.length) {
+        body.push(el('div', { class: 'll-stat-label', style: 'margin-top: var(--ll-lab-space-5)', text: 'About this snapshot' }));
+        var ul = el('ul', { class: 'notes' });
+        notes.forEach(function (n) { ul.appendChild(el('li', { text: n })); });
+        body.push(ul);
+      }
+      tiles.appendChild(card({
+        span: 'span-5', title: 'Flags', persona: 'Storage admin',
+        subtitle: 'Patterns worth a second look: mass deletes, silent agents, single-actor windows. Heuristics, not alerts.',
+        body: body,
+        tryNext: 'turn a flag into a scheduled check: run snapshot.py from cron and have the agent read only the flags section.'
+      }));
+    })();
+
+    /* table toggle for the chart */
+    var btn = document.getElementById('toggle-tables');
+    btn.addEventListener('click', function () {
+      var on = btn.getAttribute('aria-pressed') !== 'true';
+      btn.setAttribute('aria-pressed', String(on));
+      btn.textContent = on ? 'Hide tables' : 'Show tables';
+      tableViews.forEach(function (t) { t.hidden = !on; });
+    });
+  })();
+  </script>
+</body>
+</html>

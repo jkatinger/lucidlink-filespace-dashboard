@@ -1,0 +1,619 @@
+{
+  "schema": "lucidlink-filespace-dashboard/1",
+  "generated_at": "2026-09-11T02:14:34Z",
+  "source": {
+    "mode": "mount",
+    "root": "/Volumes/accessionmedia/production",
+    "filespace": "production.accessionmedia"
+  },
+  "budget": "standard",
+  "window_days": 7,
+  "title": "production",
+  "stats": {
+    "entries": 13686,
+    "files": 13492,
+    "dirs": 194,
+    "data_bytes": 31006007988,
+    "storage_bytes": 33081017209,
+    "external_files": 2,
+    "external_bytes": 23407352,
+    "stats_source": "provided (for example from the MCP filespace_stats tool)"
+  },
+  "activity": {
+    "events": 11980,
+    "by_day": [
+      {
+        "day": "2026-09-05",
+        "reads": 0,
+        "writes": 0,
+        "deletes": 0,
+        "other": 0
+      },
+      {
+        "day": "2026-09-06",
+        "reads": 0,
+        "writes": 0,
+        "deletes": 0,
+        "other": 0
+      },
+      {
+        "day": "2026-09-07",
+        "reads": 4129,
+        "writes": 166,
+        "deletes": 3,
+        "other": 0
+      },
+      {
+        "day": "2026-09-08",
+        "reads": 2611,
+        "writes": 92,
+        "deletes": 257,
+        "other": 0
+      },
+      {
+        "day": "2026-09-09",
+        "reads": 2263,
+        "writes": 187,
+        "deletes": 22,
+        "other": 0
+      },
+      {
+        "day": "2026-09-10",
+        "reads": 1204,
+        "writes": 307,
+        "deletes": 55,
+        "other": 0
+      },
+      {
+        "day": "2026-09-11",
+        "reads": 681,
+        "writes": 3,
+        "deletes": 0,
+        "other": 0
+      }
+    ],
+    "by_action": {
+      "FileRead": 10888,
+      "FileWritten": 376,
+      "FileDelete": 222,
+      "ExtendedAttributeSet": 147,
+      "FileCreate": 119,
+      "DirectoryDelete": 115,
+      "Move": 93,
+      "ExtendedAttributeDelete": 15,
+      "DirectoryCreate": 5
+    },
+    "by_actor": [
+      {
+        "name": "pm@example.com",
+        "label": "pm@example.com",
+        "kind": "human",
+        "events": 11980,
+        "reads": 10888,
+        "writes": 755,
+        "deletes": 337,
+        "last_seen": "2026-09-11T01:47:18Z",
+        "hosts": [
+          "pm-macbook"
+        ]
+      }
+    ],
+    "by_hour": [
+      780,
+      1279,
+      2,
+      13,
+      3,
+      0,
+      1,
+      1,
+      1,
+      1,
+      0,
+      0,
+      29,
+      19,
+      1025,
+      373,
+      632,
+      723,
+      1986,
+      1898,
+      1475,
+      28,
+      284,
+      1427
+    ]
+  },
+  "folders": [
+    {
+      "path": "/lucid-jk-os",
+      "files": 375,
+      "bytes": 9577901,
+      "reads": 10350,
+      "writes": 471,
+      "deletes": 26,
+      "last_write": "2026-09-11T00:26:31Z",
+      "writers": [
+        "pm@example.com"
+      ]
+    },
+    {
+      "path": "/TMS-Audio-Chapters",
+      "files": 266,
+      "bytes": 5393115026,
+      "reads": 412,
+      "writes": 280,
+      "deletes": 55,
+      "last_write": "2026-09-10T23:08:54Z",
+      "writers": [
+        "pm@example.com"
+      ]
+    },
+    {
+      "path": "/PMOS",
+      "files": 0,
+      "bytes": 0,
+      "reads": 52,
+      "writes": 0,
+      "deletes": 255,
+      "last_write": "2026-09-08T22:59:04Z",
+      "writers": [
+        "pm@example.com"
+      ]
+    },
+    {
+      "path": "/",
+      "files": 18,
+      "bytes": 10801460830,
+      "reads": 1,
+      "writes": 4,
+      "deletes": 1,
+      "last_write": "2026-09-08T22:59:04Z",
+      "writers": [
+        "pm@example.com"
+      ]
+    },
+    {
+      "path": "/remotion",
+      "files": 125,
+      "bytes": 69370478,
+      "reads": 43,
+      "writes": 0,
+      "deletes": 0,
+      "last_write": null,
+      "writers": []
+    },
+    {
+      "path": "/Scheduled",
+      "files": 3,
+      "bytes": 15984,
+      "reads": 30,
+      "writes": 0,
+      "deletes": 0,
+      "last_write": null,
+      "writers": []
+    },
+    {
+      "path": "/local_models",
+      "files": 17,
+      "bytes": 13333136563,
+      "reads": 0,
+      "writes": 0,
+      "deletes": 0,
+      "last_write": null,
+      "writers": []
+    },
+    {
+      "path": "/LL_Site_Scrape_AUG26-Tweaks",
+      "files": 6289,
+      "bytes": 416943721,
+      "reads": 0,
+      "writes": 0,
+      "deletes": 0,
+      "last_write": null,
+      "writers": []
+    },
+    {
+      "path": "/LL_Site_Scrape_BAK",
+      "files": 6278,
+      "bytes": 413815034,
+      "reads": 0,
+      "writes": 0,
+      "deletes": 0,
+      "last_write": null,
+      "writers": []
+    },
+    {
+      "path": "/Artifacts",
+      "files": 13,
+      "bytes": 888471,
+      "reads": 0,
+      "writes": 0,
+      "deletes": 0,
+      "last_write": null,
+      "writers": []
+    },
+    {
+      "path": "/collabSrvAcct",
+      "files": 101,
+      "bytes": 5732,
+      "reads": 0,
+      "writes": 0,
+      "deletes": 0,
+      "last_write": null,
+      "writers": []
+    },
+    {
+      "path": "/crewai-demo",
+      "files": 5,
+      "bytes": 3783,
+      "reads": 0,
+      "writes": 0,
+      "deletes": 0,
+      "last_write": null,
+      "writers": []
+    },
+    {
+      "path": "/_audit_teardown_test",
+      "files": 2,
+      "bytes": 72,
+      "reads": 0,
+      "writes": 0,
+      "deletes": 0,
+      "last_write": null,
+      "writers": []
+    }
+  ],
+  "cold": {
+    "buckets": [
+      {
+        "label": "last 7 days",
+        "files": 133,
+        "bytes": 2737812791
+      },
+      {
+        "label": "7 to 30 days",
+        "files": 589,
+        "bytes": 3432573864
+      },
+      {
+        "label": "30 to 90 days",
+        "files": 2449,
+        "bytes": 13798342144
+      },
+      {
+        "label": "90 days to 1 year",
+        "files": 6155,
+        "bytes": 10206687390
+      },
+      {
+        "label": "1 to 2 years",
+        "files": 3018,
+        "bytes": 191711460
+      },
+      {
+        "label": "over 2 years",
+        "files": 1148,
+        "bytes": 71205946
+      }
+    ],
+    "candidates": [
+      {
+        "path": "/TMS-Audio-Chapters/Raw 11L Exports/MP3/6_Through_My_Sights_The_Early_Years.mp3",
+        "bytes": 35923081,
+        "mtime": "2026-03-22T03:09:26Z"
+      },
+      {
+        "path": "/TMS-Audio-Chapters/Raw 11L Exports/MP3/9_Through_My_Sights_Part_II_Becoming_a_Fighter_Pilot_(1943\u20131944).mp3",
+        "bytes": 16343188,
+        "mtime": "2026-03-22T03:10:56Z"
+      },
+      {
+        "path": "/TMS-Audio-Chapters/Raw 11L Exports/MP3/10_Through_My_Sights_Preparing_for_Combat_in_the_P-40.mp3",
+        "bytes": 12066824,
+        "mtime": "2026-03-22T03:11:29Z"
+      },
+      {
+        "path": "/TMS-Audio-Chapters/Raw 11L Exports/MP3/11_Through_My_Sights_Final_Training_&_Departure.mp3",
+        "bytes": 12327625,
+        "mtime": "2026-03-22T03:12:06Z"
+      },
+      {
+        "path": "/TMS-Audio-Chapters/Raw 11L Exports/MP3/12_Through_My_Sights_Arrival_in_England_Meeting_the_20th_Fighter_Group.mp3",
+        "bytes": 17862264,
+        "mtime": "2026-03-22T03:12:52Z"
+      },
+      {
+        "path": "/TMS-Audio-Chapters/ACX Passed/6_Through_My_Sights_The_Early_Years.mp3",
+        "bytes": 35923669,
+        "mtime": "2026-03-22T03:32:16Z"
+      },
+      {
+        "path": "/TMS-Audio-Chapters/ACX Passed/9_Through_My_Sights_Part_II_Becoming_a_Fighter_Pilot_(1943\u20131944).mp3",
+        "bytes": 16343822,
+        "mtime": "2026-03-22T03:50:14Z"
+      },
+      {
+        "path": "/TMS-Audio-Chapters/ACX Passed/10_Through_My_Sights_Preparing_for_Combat_in_the_P-40.mp3",
+        "bytes": 12067413,
+        "mtime": "2026-03-22T03:51:40Z"
+      },
+      {
+        "path": "/TMS-Audio-Chapters/ACX Passed/11_Through_My_Sights_Final_Training_&_Departure.mp3",
+        "bytes": 12328214,
+        "mtime": "2026-03-22T03:53:23Z"
+      },
+      {
+        "path": "/TMS-Audio-Chapters/ACX Passed/12_Through_My_Sights_Arrival_in_England_Meeting_the_20th_Fighter_Group.mp3",
+        "bytes": 17862853,
+        "mtime": "2026-03-22T03:57:12Z"
+      }
+    ],
+    "candidate_rule": "no file of at least 10 MB is older than 180 days; showing the oldest large files instead"
+  },
+  "extensions": [
+    {
+      "ext": ".gguf",
+      "files": 2,
+      "bytes": 7556500160
+    },
+    {
+      "ext": ".zip",
+      "files": 4,
+      "bytes": 6763773320
+    },
+    {
+      "ext": ".safetensors",
+      "files": 2,
+      "bytes": 5760665246
+    },
+    {
+      "ext": ".mp4",
+      "files": 7,
+      "bytes": 3331039577
+    },
+    {
+      "ext": ".mp3",
+      "files": 194,
+      "bytes": 2524273686
+    },
+    {
+      "ext": ".wav",
+      "files": 71,
+      "bytes": 1846824510
+    },
+    {
+      "ext": ".mov",
+      "files": 1,
+      "bytes": 1056587256
+    },
+    {
+      "ext": ".avif",
+      "files": 11078,
+      "bytes": 456915604
+    },
+    {
+      "ext": ".rvt",
+      "files": 7,
+      "bytes": 336293888
+    },
+    {
+      "ext": ".html",
+      "files": 715,
+      "bytes": 284517091
+    }
+  ],
+  "largest": [
+    {
+      "path": "/local_models/lmstudio-community/gemma-4-12B-it-GGUF/gemma-4-12B-it-Q4_K_M.gguf",
+      "bytes": 7381384864
+    },
+    {
+      "path": "/Structured_2023-04-12_09-32-50am.zip",
+      "bytes": 5936309710
+    },
+    {
+      "path": "/local_models/lmstudio-community/Qwen3-VL-8B-Instruct-MLX-4bit/model-00001-of-00002.safetensors",
+      "bytes": 5353972197
+    },
+    {
+      "path": "/Petersbur project from VHS.mp4",
+      "bytes": 1882713359
+    },
+    {
+      "path": "/Designing Your System for Creativity session one.mp4",
+      "bytes": 1350711822
+    },
+    {
+      "path": "/Screen Recording 2026-09-08 at 3.01.34\u202fPM.mov",
+      "bytes": 1056587256
+    },
+    {
+      "path": "/TMS-Audio-Chapters/FINAL_SHARE/FINAL_AUDIOBOOK.zip",
+      "bytes": 824689611
+    },
+    {
+      "path": "/TMS-Audio-Chapters/Whole Book/WHOLE BOOK ElevenLabs_Through_My_Sights_v3.mp3",
+      "bytes": 496676065
+    },
+    {
+      "path": "/local_models/lmstudio-community/Qwen3-VL-8B-Instruct-MLX-4bit/model-00002-of-00002.safetensors",
+      "bytes": 406693049
+    },
+    {
+      "path": "/local_models/lmstudio-community/gemma-4-12B-it-GGUF/mmproj-gemma-4-12B-it-BF16.gguf",
+      "bytes": 175115296
+    }
+  ],
+  "locks": null,
+  "recent": [
+    {
+      "ts": "2026-09-11T00:26:31Z",
+      "path": "/lucid-jk-os/00 Intake/2026-09-10 Source Intake - Pre-Informed Caching for Neural Network Pipelines (Antoan Arnaudov).md",
+      "user": "pm@example.com",
+      "action": "FileCreate, FileWritten"
+    },
+    {
+      "ts": "2026-09-10T23:08:54Z",
+      "path": "/TMS-Audio-Chapters/toc",
+      "user": "pm@example.com",
+      "action": "DirectoryDelete"
+    },
+    {
+      "ts": "2026-09-10T23:08:54Z",
+      "path": "/TMS-Audio-Chapters/toc/43-45.png",
+      "user": "pm@example.com",
+      "action": "FileDelete"
+    },
+    {
+      "ts": "2026-09-10T23:08:54Z",
+      "path": "/TMS-Audio-Chapters/toc/22-42.png",
+      "user": "pm@example.com",
+      "action": "FileDelete"
+    },
+    {
+      "ts": "2026-09-10T23:08:54Z",
+      "path": "/TMS-Audio-Chapters/toc/1-21.png",
+      "user": "pm@example.com",
+      "action": "FileDelete"
+    },
+    {
+      "ts": "2026-09-10T23:08:54Z",
+      "path": "/TMS-Audio-Chapters/FINAL_SHARE/FINAL_AUDIOBOOK.zip.old",
+      "user": "pm@example.com",
+      "action": "FileDelete"
+    },
+    {
+      "ts": "2026-09-10T23:08:49Z",
+      "path": "/TMS-Audio-Chapters/FINAL_SHARE/FINAL_AUDIOBOOK.zip.new",
+      "user": "pm@example.com",
+      "action": "Move"
+    },
+    {
+      "ts": "2026-09-10T23:08:49Z",
+      "path": "/TMS-Audio-Chapters/FINAL_SHARE/FINAL_AUDIOBOOK.zip",
+      "user": "pm@example.com",
+      "action": "FileDelete"
+    },
+    {
+      "ts": "2026-09-10T23:08:16Z",
+      "path": "/TMS-Audio-Chapters/FINAL_SHARE/ziX6LUXp",
+      "user": "pm@example.com",
+      "action": "FileWritten, Move"
+    },
+    {
+      "ts": "2026-09-10T23:07:59Z",
+      "path": "/TMS-Audio-Chapters/FINAL_SHARE/ziX6LUXp",
+      "user": "pm@example.com",
+      "action": "FileCreate"
+    },
+    {
+      "ts": "2026-09-10T23:07:59Z",
+      "path": "/TMS-Audio-Chapters/FINAL_SHARE/FINAL_AUDIOBOOK.zip.new",
+      "user": "pm@example.com",
+      "action": "FileCreate, FileDelete"
+    },
+    {
+      "ts": "2026-09-10T20:34:08Z",
+      "path": "/TMS-Audio-Chapters/FINAL_AUDIOBOOK/TRACK_LIST.md",
+      "user": "pm@example.com",
+      "action": "FileCreate, FileWritten"
+    },
+    {
+      "ts": "2026-09-10T20:07:27Z",
+      "path": "/TMS-Audio-Chapters/_pipeline/README.md",
+      "user": "pm@example.com",
+      "action": "FileWritten"
+    },
+    {
+      "ts": "2026-09-10T20:07:27Z",
+      "path": "/TMS-Audio-Chapters/_pipeline/tag.py",
+      "user": "pm@example.com",
+      "action": "FileWritten"
+    },
+    {
+      "ts": "2026-09-10T20:07:27Z",
+      "path": "/TMS-Audio-Chapters/_pipeline/build_conclusion.py",
+      "user": "pm@example.com",
+      "action": "FileWritten"
+    },
+    {
+      "ts": "2026-09-10T20:07:27Z",
+      "path": "/TMS-Audio-Chapters/_pipeline/qa.py",
+      "user": "pm@example.com",
+      "action": "FileWritten"
+    },
+    {
+      "ts": "2026-09-10T20:05:40Z",
+      "path": "/TMS-Audio-Chapters/FINAL_SHARE/ziNEI4bq",
+      "user": "pm@example.com",
+      "action": "FileWritten, Move"
+    },
+    {
+      "ts": "2026-09-10T20:05:23Z",
+      "path": "/TMS-Audio-Chapters/FINAL_SHARE/ziNEI4bq",
+      "user": "pm@example.com",
+      "action": "FileCreate"
+    },
+    {
+      "ts": "2026-09-10T20:05:23Z",
+      "path": "/TMS-Audio-Chapters/FINAL_SHARE/FINAL_AUDIOBOOK.zip",
+      "user": "pm@example.com",
+      "action": "FileCreate, FileDelete, Move"
+    },
+    {
+      "ts": "2026-09-10T20:04:42Z",
+      "path": "/TMS-Audio-Chapters/Conclusion/conclusion_delivery_audition_v2.mp3",
+      "user": "pm@example.com",
+      "action": "Move"
+    },
+    {
+      "ts": "2026-09-10T20:04:42Z",
+      "path": "/TMS-Audio-Chapters/Conclusion/conclusion_delivery_audition_ABCD.mp3",
+      "user": "pm@example.com",
+      "action": "Move"
+    },
+    {
+      "ts": "2026-09-10T20:04:42Z",
+      "path": "/TMS-Audio-Chapters/_pipeline/assets/auditions",
+      "user": "pm@example.com",
+      "action": "DirectoryCreate"
+    },
+    {
+      "ts": "2026-09-10T19:15:46Z",
+      "path": "/TMS-Audio-Chapters/FINAL_AUDIOBOOK/Final Audio Files/47_Through_My_Sights_Conclusion.tagging.mp3",
+      "user": "pm@example.com",
+      "action": "FileCreate, FileWritten, Move"
+    },
+    {
+      "ts": "2026-09-10T19:15:46Z",
+      "path": "/TMS-Audio-Chapters/FINAL_AUDIOBOOK/Final Audio Files/47_Through_My_Sights_Conclusion.mp3",
+      "user": "pm@example.com",
+      "action": "FileDelete"
+    },
+    {
+      "ts": "2026-09-10T19:15:46Z",
+      "path": "/TMS-Audio-Chapters/FINAL_AUDIOBOOK/Final Audio Files/46_Through_My_Sights_EPILOGUE.tagging.mp3",
+      "user": "pm@example.com",
+      "action": "Move"
+    }
+  ],
+  "flags": [
+    {
+      "level": "warning",
+      "text": "pm@example.com deleted 256 entries in the hour starting 2026-09-08 22:00Z."
+    },
+    {
+      "level": "neutral",
+      "text": "No service accounts (agents or automations) touched this filespace in the window. Every event came from a human login."
+    },
+    {
+      "level": "neutral",
+      "text": "Single actor in the window. Per-actor tiles will look flat until more people or agents work here."
+    }
+  ],
+  "notes": [
+    "Excluded /Dashboards (the dashboard's own folder) from counts."
+  ]
+}

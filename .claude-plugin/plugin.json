@@ -1,0 +1,7 @@
+{
+  "name": "lucidlink-filespace-dashboard",
+  "description": "Build a shareable dashboard for a LucidLink filespace from its audit trail and tree, and place it inside the filespace. LucidLink Lab prototype.",
+  "version": "0.1.0",
+  "author": { "name": "Josh Katinger", "email": "joshua.katinger@lucidlink.com" },
+  "keywords": ["lucidlink", "filespace", "dashboard", "audit-trail", "mcp"]
+}
